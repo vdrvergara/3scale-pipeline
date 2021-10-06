@@ -2,7 +2,6 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: api-apply-app
-  namespace: user1
 spec:
   steps:
     - image: 'nmasse/3scale-toolbox:master'
