@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: api-import
+  namespace: user1
+spec:
+  steps:
+    - image: 'nmasse/3scale-toolbox:master'
+      name: service-list
+      resources: {}
+      script: |
+        #!/usr/bin/env sh
+        set -eu
+        3scale -c /config/.3scalerc.yaml import openapi -d demo https://raw.githubusercontent.com/vdrvergara/3scale-add-API/main/swagger.yaml \
+         --override-private-base-url=http://location-service.user1.svc:8080  --target_system_name=demo
+      volumeMounts:
+        - mountPath: /config
+          name: toolbox
+      workingDir: /config
+  volumes:
+    - configMap:
+        name: toolbox
+      name: toolbox

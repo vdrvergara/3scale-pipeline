@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: api-apply-app
+  namespace: user1
+spec:
+  steps:
+    - image: 'nmasse/3scale-toolbox:master'
+      name: api-apply-app
+      resources: {}
+      script: |
+        #!/usr/bin/env sh
+        set -eu
+        3scale -c /config/.3scalerc.yaml application apply demo demo --name=app-demo --service=demo --plan=demo \
+        --name=demo --description="Aplication Plan Demo" --account=12
+      volumeMounts:
+        - mountPath: /config
+          name: toolbox
+      workingDir: /config
+  volumes:
+    - configMap:
+        name: toolbox
+      name: toolbox

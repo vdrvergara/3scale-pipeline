@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  .3scalerc.yaml: |
+    ---
+    :remotes:
+      lab:
+        :authentication: 032154b29e62b5d0ab0f5bea09dad640
+        :endpoint: https://user2-admin.apps.cluster-4w2m2.4w2m2.sandbox1621.opentlc.com
+      demo:
+        :authentication: fc451b86f90390b1bf07269508acfe4d
+        :endpoint: https://user1-admin.apps.cluster-vw6pd.vw6pd.sandbox295.opentlc.com
+kind: ConfigMap
+metadata:
+  name: toolbox-2
+  namespace: user1
