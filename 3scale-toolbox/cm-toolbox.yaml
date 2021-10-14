@@ -3,13 +3,10 @@ data:
   .3scalerc.yaml: |
     ---
     :remotes:
-      lab:
+      saas:
         :authentication: <CHANGE-ME KEY>
-        :endpoint: https://user2-admin.apps.cluster-4w2m2.4w2m2.sandbox1621.opentlc.com
-      demo:
-        :authentication: <CHANGE-ME KEY>
-        :endpoint: https://user1-admin.apps.cluster-vw6pd.vw6pd.sandbox295.opentlc.com
+        :endpoint: https://3scale-admin-URL
 kind: ConfigMap
 metadata:
-  name: toolbox-2
-  namespace: user1
+  name: toolbox
+

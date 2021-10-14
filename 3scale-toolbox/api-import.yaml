@@ -3,20 +3,62 @@ kind: Task
 metadata:
   name: api-import
 spec:
+  params:
+  - default: ""
+    description: Service System name
+    name: service-system-name
+    type: string
+  - description: 3Scale URL.
+    name: remote
+    type: string
+  - default: ""
+    description: Service System name
+    name: prod-url
+    type: string
+  - description: 3Scale URL.
+    name: base-url
+    type: string
+  - default: ""
+    description: Service System name
+    name: toolbox-file
+    type: string    
+  - default: "app"
+    description: Service System name
+    name: context-dir
+    type: string     
+  - default: "swagger.yaml"
+    description: Service System name
+    name: swagger-file
+    type: string
+  - default: "true"
+    description: Debug script
+    name: params.verbose
+    type: string       
   steps:
-    - image: 'nmasse/3scale-toolbox:master'
-      name: service-list
-      resources: {}
+    - image: 'registry.redhat.io/3scale-amp2/toolbox-rhel7:3scale2.10'
+      name: import-api
       script: |
         #!/usr/bin/env sh
+
         set -eu
-        3scale -c /config/.3scalerc.yaml import openapi -d demo https://raw.githubusercontent.com/vdrvergara/3scale-add-API/main/swagger.yaml \
-         --override-private-base-url=http://location-service.user1.svc:8080  --target_system_name=demo
+        
+        if [ "${params.verbose}" = "true" ] ; then
+          set -x
+        fi
+
+        # Fix 3scale-toolbox image error        
+        export BUNDLE_GEMFILE=/opt/toolbox/Gemfile        
+
+        3scale -c /config/3scalerc.yaml import openapi -d $(params.remote) $(workspaces.shared.path)/app/$(params.swagger-file) --override-private-base-url=$(params.base-url) --target_system_name=$(params.service-system-name) --default-credentials-userkey --skip-openapi-validation --production-public-base-url=$(params.prod-url) --verbose
+
       volumeMounts:
         - mountPath: /config
           name: toolbox
-      workingDir: /config
+      workingDir: /workspaces/shared/$(params.context-dir)
   volumes:
     - configMap:
         name: toolbox
       name: toolbox
+  workspaces:
+  - description: The git repo will be cloned onto the volume backing this Workspace.
+    name: shared     
