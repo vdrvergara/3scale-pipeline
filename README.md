@@ -3,7 +3,7 @@
 How to use Tekton to automate API creation and update on 3Scale
 ---
 
-To try out this demo you can use an application on [repo](https://github.com/vdrvergara/halting-shock.git) and deploy it on Openshift. The instructions to deploy this application can be found in README.md.
+To try out this demo you can use the application `Halting Shock` on [repo](https://github.com/vdrvergara/halting-shock.git) and deploy it on Openshift. The instructions to deploy this application can be found in README.md.
 
 This demostration uses a namespace called *demo*.
 
