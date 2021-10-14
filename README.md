@@ -60,7 +60,7 @@ oc new-project demo
   
   Parameter: app-name
   description: Application name  
-     
+```
 
 5. Create resources in Openshift
 
@@ -69,32 +69,5 @@ oc apply -f 3scale/
 oc apply -f tasks/
 ```
   
-3scale repo
-https://github.com/vdrvergara/3scale-tekton-pipeline.git
-
-App repo 
-https://github.com/vdrvergara/halting-shock.git
-
-Base url
-http://halting-shock.demo.svc:8080
-
-
-Prod url
-http://halting-shock-demo.apps.cluster-d0cc.d0cc.sandbox825.opentlc.com/
-
-image:
-registry.redhat.io/3scale-amp2/toolbox-rhel7:3scale2.10
-
-Account id: 2445584031479
-
-delete PipelineRun
-for i in $(oc get pr | awk '{print $1}'); do oc delete pr $i; done;
-
-image: 'nmasse/3scale-toolbox:master'
-
-
-    :endpoint: https://red-hat-vergara-admin.3scale.net
-
-    user key 6c5812dccff9069f0ba823c207750536 
 
 
