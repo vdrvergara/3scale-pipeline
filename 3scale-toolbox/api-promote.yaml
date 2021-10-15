@@ -44,7 +44,9 @@ spec:
         # Fix 3scale-toolbox image error        
         export BUNDLE_GEMFILE=/opt/toolbox/Gemfile  
 
-        3scale -c /config/.3scalerc.yaml proxy-config promote $(params.remote) $(params.service-id)        
+        SERVICE_ID="scale service show $(params.remote) $(params.service-system-name) | '{print $1}' | head -n +2`
+        
+        3scale -c /config/.3scalerc.yaml proxy-config promote $(params.remote) $SERVICE_ID        
       volumeMounts:
         - mountPath: /config
           name: toolbox
