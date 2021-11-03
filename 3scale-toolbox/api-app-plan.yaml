@@ -43,6 +43,7 @@ spec:
 
         # Fix 3scale-toolbox image error        
         export BUNDLE_GEMFILE=/opt/toolbox/Gemfile 
+        #SERVICE_ID="scale service show $(params.remote) $(params.service-system-name) | '{print $1}' | head -n +2`
         
         SERVICE=`3scale -c /config/.3scalerc.yaml service show $(params.remote) $(params.service-system-name) | awk printf${1} | tail -n +2`
 
