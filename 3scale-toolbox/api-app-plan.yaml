@@ -14,16 +14,16 @@ spec:
   - description: 3Scale remote name.
     name: remote
     type: string
-  - default: ""
-    description: Service ID
-    name: service-id
+  - default: "example"
+    description: Service System name
+    name: service-system-name
     type: string
+  - default: ''
+    description: Service name
+    name: service-name
+    type: string    
   - description: 3Scale URL.
     name: base-url
-    type: string
-  - default: ""
-    description: Service System name
-    name: toolbox-file
     type: string
   - default: ""
     description: Application Plan name
@@ -31,7 +31,7 @@ spec:
     type: string
   - default: "true"
     description: Debug script
-    name: params.verbose
+    name: verbose
     type: string     
   steps:
     - image: 'registry.redhat.io/3scale-amp2/toolbox-rhel7:3scale2.10'
@@ -44,7 +44,13 @@ spec:
         # Fix 3scale-toolbox image error        
         export BUNDLE_GEMFILE=/opt/toolbox/Gemfile 
         
-        3scale -c $(workspaces.shared.path)/3scale/$(params.toolbox-file) application-plan apply $(params.remote) $(params.service-id) --name=$(params.app-plan-name) --account=$(params.account)
+        SERVICE=`3scale -c /config/.3scalerc.yaml service show $(params.remote) $(params.service-system-name) | awk printf${1} | tail -n +2`
+
+        echo "service = $SERVICE"
+
+        3scale -c /config/.3scalerc.yaml application-plan apply $(params.remote) $SERVICE --name=$(params.app-plan-name) --approval-required=false --enabled=true
+
+
       volumeMounts:
         - mountPath: /config
           name: toolbox

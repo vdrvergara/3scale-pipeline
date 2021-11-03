@@ -1,0 +1,100 @@
+﻿apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: demo
+  namespace: example
+spec:
+  tasks:
+    - name: git-fetch-repo
+      params:
+        - name: url
+          value: 'https://github.com/vdrvergara/halting-shock.git'
+        - name: submodules
+          value: 'true'
+        - name: depth
+          value: '1'
+        - name: sslVerify
+          value: 'true'
+        - name: subdirectory
+          value: app
+        - name: deleteExisting
+          value: 'true'
+        - name: verbose
+          value: 'true'
+        - name: gitInitImage
+          value: >-
+            registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:da1aedf0b17f2b9dd2a46edc93ff1c0582989414b902a28cd79bad8a035c9ea4
+        - name: userHome
+          value: /tekton/home
+      taskRef:
+        kind: Task
+        name: git-fetch-repo
+      workspaces:
+        - name: shared
+          workspace: shared
+    - name: api-import
+      params:
+        - name: service-system-name
+          value: example
+        - name: remote
+          value: saas
+        - name: prod-url
+          value: >-
+            http://halting-shock-git-demo.apps.cluster-4tdh2.4tdh2.sandbox1123.opentlc.com
+        - name: base-url
+          value: 'http://halting-shock-git.demo.svc:8080'
+        - name: context-dir
+          value: app
+        - name: swagger-file
+          value: swagger.yaml
+        - name: verbose
+          value: 'true'
+      runAfter:
+        - git-fetch-repo
+      taskRef:
+        kind: Task
+        name: api-import
+      workspaces:
+        - name: shared
+          workspace: shared
+    - name: api-app-plan
+      params:
+        - name: remote
+          value: saas
+        - name: account
+          value: '2445584031479'
+        - name: base-url
+          value: 'http://halting-shock.demo.svc:8080'
+        - name: app-plan-name
+          value: example
+        - name: verbose
+          value: 'true'
+      runAfter:
+        - api-import
+      taskRef:
+        kind: Task
+        name: api-app-plan
+      workspaces:
+        - name: shared
+          workspace: shared
+    - name: api-apply-app
+      params:
+        - name: remote
+          value: saas
+        - name: app-plan-name
+          value: example
+        - name: app-name
+          value: example
+        - name: app-description
+          value: example
+        - name: account
+          value: '2445584031479'
+        - name: verbose
+          value: 'true'
+      runAfter:
+        - api-app-plan
+      taskRef:
+        kind: Task
+        name: api-apply-app
+  workspaces:
+    - name: shared

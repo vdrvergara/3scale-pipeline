@@ -21,18 +21,17 @@ spec:
   - description: 3Scale URL.
     name: base-url
     type: string
-  - default: ""
+  - default: "example"
     description: Service System name
-    name: toolbox-file
+    name: service-system-name
     type: string
   - default: "true"
     description: Debug script
-    name: params.verbose
+    name: verbose
     type: string    
   steps:
     - image: 'registry.redhat.io/3scale-amp2/toolbox-rhel7:3scale2.10'
       name: api-promote
-      resources: {}
       script: |
         #!/usr/bin/env sh
         set -eu
@@ -44,7 +43,10 @@ spec:
         # Fix 3scale-toolbox image error        
         export BUNDLE_GEMFILE=/opt/toolbox/Gemfile  
 
-        3scale -c /config/.3scalerc.yaml proxy-config promote $(params.remote) $(params.service-id)        
+        SERVICE=`3scale -c /config/.3scalerc.yaml service show $(params.remote) $(params.service-system-name) | awk printf${1} | tail -n +2`
+
+        3scale -c /config/.3scalerc.yaml proxy-config promote $(params.remote) $SERVICE
+
       volumeMounts:
         - mountPath: /config
           name: toolbox

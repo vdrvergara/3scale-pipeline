@@ -4,53 +4,53 @@ metadata:
   name: api-import
 spec:
   params:
-  - default: ""
-    description: Service System name
-    name: service-system-name
-    type: string
-  - description: 3Scale URL.
-    name: remote
-    type: string
-  - default: ""
-    description: Service System name
-    name: prod-url
-    type: string
-  - description: 3Scale URL.
-    name: base-url
-    type: string
-  - default: ""
-    description: Service System name
-    name: toolbox-file
-    type: string    
-  - default: "app"
-    description: Service System name
-    name: context-dir
-    type: string     
-  - default: "swagger.yaml"
-    description: Service System name
-    name: swagger-file
-    type: string
-  - default: "true"
-    description: Debug script
-    name: params.verbose
-    type: string       
+    - default: example
+      description: Service System name
+      name: service-system-name
+      type: string
+    - description: 3Scale remote name.
+      name: remote
+      type: string
+    - default: ''
+      description: Production URL
+      name: prod-url
+      type: string
+    - description: 3Scale URL.
+      name: base-url
+      type: string
+    - default: app
+      description: Directory with resources
+      name: context-dir
+      type: string
+    - default: swagger.yaml
+      description: Swagger file name
+      name: swagger-file
+      type: string
+    - default: 'true'
+      description: Debug script
+      name: verbose
+      type: string
+    - default: fd390a6bb17d737a4535b7a21b26e41f
+      description: User key
+      name: user-key
+      type: string 
   steps:
     - image: 'registry.redhat.io/3scale-amp2/toolbox-rhel7:3scale2.10'
       name: import-api
       script: |
         #!/usr/bin/env sh
 
-        set -eu
-        
-        if [ "${params.verbose}" = "true" ] ; then
-          set -x
-        fi
+        set -eu        
 
         # Fix 3scale-toolbox image error        
         export BUNDLE_GEMFILE=/opt/toolbox/Gemfile        
 
-        3scale -c /config/3scalerc.yaml import openapi -d $(params.remote) $(workspaces.shared.path)/app/$(params.swagger-file) --override-private-base-url=$(params.base-url) --target_system_name=$(params.service-system-name) --default-credentials-userkey --skip-openapi-validation --production-public-base-url=$(params.prod-url) --verbose
-
+        if [[ $(3scale -c /config/.3scalerc.yaml import openapi -d $(params.remote) $(workspaces.shared.path)/$(params.context-dir)/src/main/resources/$(params.swagger-file) --override-private-base-url=$(params.base-url) --target_system_name=$(params.service-system-name) --default-credentials-userkey=$(params.user-key) --skip-openapi-validation --production-public-base-url=$(params.prod-url) --verbose) ]]
+        then
+          echo "Execução com sucesso"
+        else
+            echo "Falha"
+        fi
       volumeMounts:
         - mountPath: /config
           name: toolbox
